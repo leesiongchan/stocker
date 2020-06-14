@@ -50,6 +50,7 @@ pub struct UiState {
     pub indicator: Option<Indicator>,
     pub indicator_menu_state: RwLock<SelectMenuState<Indicator>>,
     pub start_date: Option<DateTime<Utc>>,
+    pub status: Status,
     pub stock_symbol_input_state: InputState,
     target_areas: RwLock<OrdMap<UiTarget, Rect>>,
     pub time_frame: TimeFrame,
@@ -221,6 +222,7 @@ impl Default for UiState {
             indicator_menu_state: RwLock::new(SelectMenuState::new(Indicator::iter())),
             frame_rate_counter: FrameRateCounter::new(Duration::milliseconds(1_000)),
             start_date: None,
+            status: Status::default(),
             stock_symbol_input_state: InputState::default(),
             target_areas: RwLock::new(ordmap! {}),
             time_frame: TimeFrame::default(),
@@ -413,6 +415,27 @@ impl fmt::Display for Indicator {
             // Self::MovingAverageConvergenceDivergence => write!(f, "MACD"),
             // Self::RelativeStrengthIndex => write!(f, "RSI"),
             Self::SimpleMovingAverage(period) => write!(f, "SMA{}", period),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum Status {
+    Loading,
+    Idle,
+}
+
+impl Default for Status {
+    fn default() -> Self {
+        Self::Idle
+    }
+}
+
+impl fmt::Display for Status {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Loading => write!(f, "Loading..."),
+            Self::Idle => write!(f, "Idle"),
         }
     }
 }

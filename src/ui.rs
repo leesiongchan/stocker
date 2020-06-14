@@ -283,15 +283,27 @@ fn draw_footer<B: Backend>(
             1
         })
         .constraints(vec![
+            Constraint::Length(20),
             Constraint::Min(0),
             Constraint::Length(30),
             Constraint::Length(20),
         ])
         .split(area);
-    let indicator_area = chunks[1];
-    let time_frame_area = chunks[2];
+    let status_area = chunks[0];
+    let indicator_area = chunks[2];
+    let time_frame_area = chunks[3];
 
     let menu_active_base_style = Style::default().fg(Color::White).bg(Color::DarkGray);
+
+    let status_texts = vec![
+        Text::styled("Status: ", Style::default()),
+        Text::styled(ui_state.status.to_string(), Style::default()),
+    ];
+    let status_paragraph = Paragraph::new(status_texts.iter())
+        .block(Block::default())
+        .style(Style::default())
+        .alignment(Alignment::Left);
+    f.render_widget(status_paragraph, status_area);
 
     let indicators_texts = vec![
         Text::styled(
